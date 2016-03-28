@@ -3,6 +3,7 @@ package image.compressor.matrix.common;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import Jama.Matrix;
 
 public class MatrixReader {
 	public static Matrix readMatrixFromPgmFile(String fileName) {
@@ -25,12 +26,12 @@ public class MatrixReader {
 			result = new Matrix(picHeight, picWidth);
 			for (int i = 0; i < picHeight; i++) {
 				for (int j = 0; j < picWidth; j++) {
-					result.addElementToMatrix(i, j, scan.nextInt());
+					result.set(i, j, scan.nextInt());
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			result = new Matrix();
+			result = new Matrix(null);
 		} finally {
 			try {
 				fileInputStream.close();
@@ -44,7 +45,7 @@ public class MatrixReader {
 
 	public static void main(String[] args) {
 		//sample usage
-		MatrixReader.readMatrixFromPgmFile("C:\\file.pgm").print();
+		MatrixReader.readMatrixFromPgmFile("E:\\Pictures\\baboon.ascii.pgm").print(3, 0);
 	}
 
 }
