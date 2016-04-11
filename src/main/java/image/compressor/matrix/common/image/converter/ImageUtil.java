@@ -101,8 +101,8 @@ public class ImageUtil {
 
 	static public void main(String args[]) throws Exception {
 		Matrix imageAsMatrix = ImageUtil
-				.getImageAsMatrix("C:\\Users\\az\\Desktop\\IMG_1219_grey.jpg");
+				.getImageAsMatrix("E:\\Pictures\\download.jpg");
 		ImageUtil.createImageFromMatrix(imageAsMatrix,
-				"C:\\Users\\az\\Desktop\\IMG_1219_matrix.jpg");
+				"E:\\Pictures\\download1.jpg");
 	}
 }
