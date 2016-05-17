@@ -54,11 +54,11 @@ public class MatrixReader {
 	}
         
        
-	public static void main(String[] args) {
-		//sample usage
-            Matrix a = readMatrixFromPgmFile("E:\\Pictures\\baboon.ascii.pgm");
-
-            SVD.SVD(a, 90);
-	}
+//	public static void main(String[] args) {
+//		//sample usage
+//            Matrix a = readMatrixFromPgmFile("E:\\Pictures\\baboon.ascii.pgm");
+//
+//            SVD.SVD(a, 90);
+//	}
 
 }

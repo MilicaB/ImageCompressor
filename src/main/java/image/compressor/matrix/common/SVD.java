@@ -35,7 +35,10 @@ public class SVD {
             double [] singular = new double [ savedEigenValues];
             
             for ( int i = 0; i < savedEigenValues; i++ ){
-                singular[i] = Math.sqrt(eigen[eigen.length - 1 - i]);
+//                singular[i] = Math.sqrt(eigen[eigen.length -1 - i]);
+                singular[i] = Math.sqrt(eigen[eigen.length - savedEigenValues + i]);
+                System.out.println(singular[i]);
+
             }
             
             return singular;
@@ -51,33 +54,44 @@ public class SVD {
          */
         public static Matrix SVD( Matrix rawPicMatrix, int percent){
             
-            Matrix A = rawPicMatrix;
+            Matrix A = rawPicMatrix; 
             int rowCount = rawPicMatrix.getRowDimension();
             int colCount = rawPicMatrix.getColumnDimension();
             Matrix symmetricRawPicMatrix = rawPicMatrix.transpose().times(rawPicMatrix);
             
             EigenvalueDecomposition a = symmetricRawPicMatrix.eig();
             double [] eigenValues= a.getRealEigenvalues();
+          
             
             int nonzeroVal = 0;
             for ( int i = 0; i < colCount; i++){
-                if ( eigenValues[i] != 0){
+                if ( eigenValues[i] > 0){ 
                     nonzeroVal++;
                 }
             }
             
-            int saved = nonzeroVal * ( 1- percent/100);
+            int saved =(int)(nonzeroVal * ( 1.0- percent/100.0));
+//            int saved=nonzeroVal;
             double [] singular = singularValues(eigenValues, saved);
             
+            //
+            //
+            //problems??
+            //   ||
+            //   ||
+            //  \  /
+            //   \/
+            
             Matrix eigenVectors = a.getV();
-
+            
             
             Matrix U = new  Matrix(rowCount, saved);
-            Matrix temp = A.times(eigenVectors.transpose());
-
+            Matrix temp = A.times(eigenVectors);//eigenVectors.transpose()
+            int tempRow = temp.getRowDimension();
+            int tempCol = temp.getColumnDimension();
             for(int i = 0; i < rowCount; i++){
                 for(int j = 0; j < saved; j++){
-                    U.set(i, j, temp.get(i, j)/singular[j]);
+                    U.set(i, j, temp.get(i, tempCol - saved+j)/singular[j]);
                 }
             }
             
@@ -86,7 +100,18 @@ public class SVD {
                 singularMatrix.set(i, i, singular[i]);
             }
             
-            Matrix result = U.times(singularMatrix).times(eigenVectors);
+            int eigVCol = eigenVectors.getColumnDimension();
+            int eigVRow = eigenVectors.getRowDimension();
+            Matrix transposedEigV = eigenVectors.transpose();
+            Matrix newEigenVectors = new Matrix(saved, eigVCol);
+            for ( int i = 0; i < saved; i++){
+                for ( int j = 0; j < eigVCol; j++){
+                    newEigenVectors.set(i,j,transposedEigV.get(eigVRow - saved + i, j));
+                }
+            }
+            
+            Matrix result = U.times(singularMatrix).times(newEigenVectors);
+            A.minus(result).print(20, 19);
             return result;
         }
     

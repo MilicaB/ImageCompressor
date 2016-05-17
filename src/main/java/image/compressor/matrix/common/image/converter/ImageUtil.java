@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 
 import Jama.Matrix;
+import image.compressor.matrix.common.SVD;
 
 public class ImageUtil {
 
@@ -102,7 +102,14 @@ public class ImageUtil {
 	static public void main(String args[]) throws Exception {
 		Matrix imageAsMatrix = ImageUtil
 				.getImageAsMatrix("E:\\Pictures\\download.jpg");
-		ImageUtil.createImageFromMatrix(imageAsMatrix,
+//
+                Matrix a = SVD.SVD(imageAsMatrix,20);
+//                double m [][]= {{2,0}, {1, 2}, {0, 1}};
+//                Matrix b = new Matrix(m);
+//                SVD.SVD(b, 20).print(5, 2);
+//                Matrix randomMatrix = Matrix.random(100, 100);
+//                SVD.SVD(randomMatrix, 0);
+                ImageUtil.createImageFromMatrix( a ,
 				"E:\\Pictures\\download1.jpg");
 	}
 }
