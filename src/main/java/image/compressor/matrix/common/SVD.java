@@ -1,18 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package image.compressor.matrix.common;
 
-import Jama.Matrix;
 import Jama.EigenvalueDecomposition;
-
-import java.lang.*;
-import java.util.LinkedList;
-import java.util.List;
-
-//import pitt.search.semanticvectors.vectors.Vector;
+import Jama.Matrix;
 
 /**
  *
@@ -39,10 +28,7 @@ public class SVD {
             double [] singular = new double [ savedEigenValues];
             
             for ( int i = 0; i < savedEigenValues; i++ ){
-//                singular[i] = Math.sqrt(eigen[eigen.length -1 - i]);
                 singular[i] = Math.sqrt(eigen[eigen.length - savedEigenValues + i]);
-                System.out.println(singular[i]);
-
             }
             
             return singular;
@@ -56,7 +42,7 @@ public class SVD {
          * @param percent
          * @return 
          */
-        public static Matrix SVD( Matrix rawPicMatrix, int percent){
+        public static Matrix compress( Matrix rawPicMatrix, int percent){
             
             Matrix A = rawPicMatrix; 
             int rowCount = rawPicMatrix.getRowDimension();
@@ -75,23 +61,13 @@ public class SVD {
             }
             
             int saved =(int)(nonzeroVal * ( 1.0- percent/100.0));
-//            int saved=nonzeroVal;
             double [] singular = singularValues(eigenValues, saved);
             
-            //
-            //
-            //problems??
-            //   ||
-            //   ||
-            //  \  /
-            //   \/
-            
             Matrix eigenVectors = a.getV();
-            
+           
             
             Matrix U = new  Matrix(rowCount, saved);
             Matrix temp = A.times(eigenVectors);//eigenVectors.transpose()
-            int tempRow = temp.getRowDimension();
             int tempCol = temp.getColumnDimension();
             for(int i = 0; i < rowCount; i++){
                 for(int j = 0; j < saved; j++){
@@ -115,7 +91,6 @@ public class SVD {
             }
             
             Matrix result = U.times(singularMatrix).times(newEigenVectors);
-            A.minus(result).print(20, 19);
             return result;
         }
     
