@@ -48,7 +48,15 @@ public class SVD {
             Matrix A = rawPicMatrix;
             int rowCount = rawPicMatrix.getRowDimension();
             int colCount = rawPicMatrix.getColumnDimension();
-            Matrix symmetricRawPicMatrix = rawPicMatrix.transpose().times(rawPicMatrix);
+            Matrix symmetricRawPicMatrix;
+            
+            if(rowCount < colCount){
+                symmetricRawPicMatrix = rawPicMatrix.transpose().times(rawPicMatrix);
+            }
+            else{
+                symmetricRawPicMatrix = rawPicMatrix.times(rawPicMatrix.transpose());
+            }
+
             
             EigenvalueDecomposition a = symmetricRawPicMatrix.eig();
             double [] eigenValues= a.getRealEigenvalues();
