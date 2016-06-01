@@ -2,6 +2,7 @@ package image.compressor.matrix.common;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
+import Jama.QRDecomposition;
 
 /**
  *
@@ -44,7 +45,7 @@ public class SVD {
          */
         public static Matrix compress( Matrix rawPicMatrix, int percent){
             
-            Matrix A = rawPicMatrix; 
+            Matrix A = rawPicMatrix;
             int rowCount = rawPicMatrix.getRowDimension();
             int colCount = rawPicMatrix.getColumnDimension();
             Matrix symmetricRawPicMatrix = rawPicMatrix.transpose().times(rawPicMatrix);
