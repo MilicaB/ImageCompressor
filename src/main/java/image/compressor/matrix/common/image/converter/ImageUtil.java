@@ -179,8 +179,8 @@ public class ImageUtil {
 
 	static public void main(String args[]) throws Exception {
 		long start = System.currentTimeMillis();
-		ImageUtil util = new ImageUtil("D:\\Az\\Pictures\\Saved Pictures\\grumpyCat.jpg");
-		util.convertImage("D:\\Az\\Pictures\\Saved Pictures\\grumpyCatConverted.jpg", 99);
+		ImageUtil util = new ImageUtil("");
+		util.convertImage("", 99);
 		double time = (System.currentTimeMillis()-start)/1000;
 		System.out.println("TIME FOR CONVERTING: "+time);
 
