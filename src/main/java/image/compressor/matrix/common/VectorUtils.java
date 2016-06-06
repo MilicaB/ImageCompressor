@@ -22,7 +22,7 @@ public class VectorUtils {
         }
         return result;
     }
-    
+
     public static double[] getSub(double[] v1, double[] v2) {
         if (v1.length != v2.length) {
             throw new IllegalArgumentException("Unable to calculate dot product of vectors with different dimentions!");
