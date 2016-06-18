@@ -20,11 +20,17 @@ public class AlgebraicVector {
     }
 
     public AlgebraicVector(int size) {
-        vector = new ArrayList<Double>(Collections.nCopies(size, 0.0));
+        double[] array = new double[size];
+        Arrays.fill(array, 0);
+        createArrayListFromArray(array);
+    }
+
+    private void createArrayListFromArray(double[] array) {
+        this.vector = new ArrayList<Double>(Arrays.asList(ArrayUtils.toObject(array)));
     }
 
     public AlgebraicVector(double[] v1) {
-        this.vector = new ArrayList<Double>(Arrays.asList(ArrayUtils.toObject(v1)));
+        createArrayListFromArray(v1);
     }
 
     public AlgebraicVector(AlgebraicVector algebraicVector) {
@@ -38,7 +44,7 @@ public class AlgebraicVector {
      * @return
      */
     public Double getElem(int elementIndex) {
-        if (elementIndex > vector.size()) {
+        if (elementIndex >= vector.size()) {
             throw new IllegalArgumentException(String.format("No such element: %s!", elementIndex));
         }
         return vector.get(elementIndex);
@@ -67,12 +73,43 @@ public class AlgebraicVector {
     }
 
     /**
+     * Gets the length of the vector
+     * 
+     * @return
+     */
+    public double length() {
+        return Math.sqrt(dot(this));
+    }
+
+    /**
      * Adds element in the vector
      * 
      * @param elem
      */
     public void addElem(double elem) {
         vector.add(elem);
+    }
+
+    /**
+     * Check if given element is part of the vector
+     * 
+     * @param elem
+     * @return
+     */
+    public boolean contains(double elem) {
+        return vector.contains(elem);
+    }
+
+    /**
+     * Removes given element from the vector
+     * 
+     * @param elem
+     */
+    public void removeElement(double elem) {
+        if (!vector.contains(elem)) {
+            throw new IllegalArgumentException(String.format("No such element: %s in the vector!", elem));
+        }
+        vector.remove(elem);
     }
 
     /**
@@ -138,5 +175,25 @@ public class AlgebraicVector {
             result.addElem(vector.get(i) - other.getElem(i));
         }
         return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AlgebraicVector other = (AlgebraicVector) obj;
+        return other.vector.equals(vector);
+    }
+    
+    public void print(){
+        System.out.print("[");
+        for(int i=0;i<vector.size()-1;i++){
+            System.out.print(vector.get(i)+",");
+        }
+        System.out.print(vector.get(vector.size()-1) + "]\n");
     }
 }

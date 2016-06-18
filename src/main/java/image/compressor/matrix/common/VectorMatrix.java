@@ -1,19 +1,26 @@
 package image.compressor.matrix.common;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class VectorMatrix {
     private ArrayList<AlgebraicVector> matrix;
 
     public VectorMatrix(int rows, int cols) {
-        matrix = new ArrayList<AlgebraicVector>(Collections.nCopies(cols, new AlgebraicVector(rows)));
+        matrix = new ArrayList<AlgebraicVector>();
+        for (int i = 0; i < cols; i++) {
+            AlgebraicVector algebraicVector = new AlgebraicVector(rows);
+            matrix.add(algebraicVector);
+        }
     }
 
     public VectorMatrix(AlgebraicVector... algebraicVectors) {
         if (!checkVectorsSize(algebraicVectors)) {
             throw new IllegalArgumentException("The size of the vectors should be equal!");
         }
+        createMatrixFromArray(algebraicVectors);
+    }
+
+    private void createMatrixFromArray(AlgebraicVector... algebraicVectors) {
         matrix = new ArrayList<AlgebraicVector>();
         for (AlgebraicVector algebraicVector : algebraicVectors) {
             matrix.add(algebraicVector);
@@ -179,12 +186,13 @@ public class VectorMatrix {
      * Prints the matrix on the console
      */
     public void print() {
-        for (int i = 0; i < getRows(); i++) {
-            for (int j = 0; j < getCols(); j++) {
-                System.out.print(getElement(i, j) + "\t");
-            }
-            System.out.println();
+        System.out.println("[");
+        for(int i=0;i<matrix.size()-1;i++){
+            matrix.get(i).print();
+            System.out.print(",\n");
         }
+        matrix.get(matrix.size()-1).print();
+        System.out.println("]");
     }
 
     /**
@@ -211,4 +219,23 @@ public class VectorMatrix {
         return new AlgebraicVector(matrix.get(colNum));
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((matrix == null) ? 0 : matrix.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        VectorMatrix other = (VectorMatrix) obj;
+        return matrix.equals(other.matrix);
+    }
 }

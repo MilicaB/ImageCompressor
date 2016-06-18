@@ -4,33 +4,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GramSchmidt {
-    private Map<Integer, double[]> unitVectors;
-    private Matrix matrix;
+    private Map<Integer, AlgebraicVector> unitVectors;
+    private VectorMatrix matrix;
     private Map<Pair, Double> dotProducts;
-    private Map<Integer, double[]> ortogonalVectors;
+    private Map<Integer, AlgebraicVector> ortogonalVectors;
 
-    public GramSchmidt(Matrix matrix) {
-        this.setMatrix(matrix);
-        unitVectors = new HashMap<Integer, double[]>();
+    public GramSchmidt(VectorMatrix matrix) {
+        this.matrix = matrix;
+        unitVectors = new HashMap<Integer, AlgebraicVector>();
         dotProducts = new HashMap<Pair, Double>();
-        ortogonalVectors = new HashMap<Integer, double[]>();
+        ortogonalVectors = new HashMap<Integer, AlgebraicVector>();
         getOrtogonalVectors();
         getUnitVectors();
     }
 
-    public Matrix getMatrix() {
+    public VectorMatrix getMatrix() {
         return matrix;
     }
 
-    public void setMatrix(Matrix matrix) {
+    public void setMatrix(VectorMatrix matrix) {
         this.matrix = matrix;
     }
 
     private void getUnitVectors() {
         for (int i = 1; i <= matrix.getCols(); i++) {
-            double[] vector = ortogonalVectors.get(i);
-            double vectorLength = VectorUtils.getVectorLength(vector);
-            double[] unitVector = VectorUtils.multiplyByNumber(vector, (1.0 / vectorLength));
+            AlgebraicVector vector = ortogonalVectors.get(i);
+            double vectorLength = vector.length();
+            AlgebraicVector unitVector = vector.multiplyByNum((1.0 / vectorLength));
             unitVectors.put(i, unitVector);
         }
     }
@@ -44,33 +44,31 @@ public class GramSchmidt {
     }
 
     private void evalDotProduct(int eNum, int aNum) {
-        double prod = 0;
-        for (int i = 0; i < getMatrix().getRows(); i++) {
-            prod += unitVectors.get(eNum)[i] * getMatrix().getCol(aNum)[i];
-        }
-
-        dotProducts.put(new Pair(eNum, aNum), prod);
+        dotProducts.put(new Pair(eNum, aNum), unitVectors.get(eNum).dot(unitVectors.get(aNum)));
     }
 
-    public double[] getUnitVector(int unitVectorNum) {
+    public AlgebraicVector getUnitVector(int unitVectorNum) {
         return unitVectors.get(unitVectorNum);
     }
 
     private void getOrtogonalVectors() {
         for (int i = 1; i <= matrix.getCols(); i++) {
-            double[] vector = matrix.getCol(i-1);
+            AlgebraicVector vector = matrix.getCol(i - 1);
             for (int j = 1; j < i; j++) {
-                vector = VectorUtils.getSub(vector, getProjection(vector, j));
+                vector = vector.subtract(getProjection(vector, j));
             }
             ortogonalVectors.put(i, vector);
         }
     }
-    
-    private double[] getProjection(double[] vector,int j){
-        double projection = VectorUtils.getDotProduct(vector, ortogonalVectors.get(j))
-                / VectorUtils.getDotProduct(ortogonalVectors.get(j), ortogonalVectors.get(j));
-        return VectorUtils.multiplyByNumber(ortogonalVectors.get(j), projection);
-        
+
+    public AlgebraicVector getOrtogonalVector(int index) {
+        return ortogonalVectors.get(index);
+    }
+
+    private AlgebraicVector getProjection(AlgebraicVector vector, int j) {
+        double projection = vector.dot(ortogonalVectors.get(j)) / ortogonalVectors.get(j).dot(ortogonalVectors.get(j));
+        return ortogonalVectors.get(j).multiplyByNum(projection);
+
     }
 
     private class Pair {
@@ -113,17 +111,5 @@ public class GramSchmidt {
                 return false;
             return true;
         }
-    }
-
-    public static void main(String[] args) {
-        Matrix matrix = new Matrix(2,2);
-        matrix.addElementToMatrix(0, 0, 3);
-        matrix.addElementToMatrix(0, 1, 2);
-        matrix.addElementToMatrix(1, 0, 1);
-        matrix.addElementToMatrix(1, 1, 2);
-        GramSchmidt gs = new GramSchmidt(matrix);
-        double[] unitVector1 = gs.getUnitVector(1);
-        double[] unitVector2 = gs.getUnitVector(2);
-        System.out.println((int)VectorUtils.getDotProduct(unitVector1, unitVector2));
     }
 }
