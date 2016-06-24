@@ -3,12 +3,17 @@ package image.compressor.matrix.common;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class GramSchmidt {
     private Map<Integer, AlgebraicVector> unitVectors;
     private VectorMatrix matrix;
     private Map<Pair, Double> dotProducts;
     private Map<Integer, AlgebraicVector> ortogonalVectors;
-
+    
+/**
+ * Constructs object of type GramSchmidt by VectorMatrix object
+ * @param matrix 
+ */
     public GramSchmidt(VectorMatrix matrix) {
         this.matrix = matrix;
         unitVectors = new HashMap<Integer, AlgebraicVector>();
@@ -18,6 +23,7 @@ public class GramSchmidt {
         getUnitVectors();
     }
 
+    
     public VectorMatrix getMatrix() {
         return matrix;
     }

@@ -1,4 +1,4 @@
-package image.compressor.matrix.common;
+    package image.compressor.matrix.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
