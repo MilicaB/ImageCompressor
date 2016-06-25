@@ -19,7 +19,7 @@ public class QR_decomposition {
         eigenValues = new ArrayList<Double>();
         GramSchmidt grShOb = new GramSchmidt(symmetricRawPicMatrix);
 
-        VectorMatrix B = new VectorMatrix(getQMatrix(grShOb));
+        VectorMatrix B = new VectorMatrix(symmetricRawPicMatrix);
         VectorMatrix Q = new VectorMatrix(B);
         VectorMatrix R = new VectorMatrix(B);
         grShOb.setMatrix(R.multiply(Q));
@@ -54,7 +54,7 @@ public class QR_decomposition {
 
         for (int i = 0; i < rows; i++) {
             B.getMatrix().getCol(i).print();
-            AlgebraicVector vector = B.getUnitVector(i+1);
+            AlgebraicVector vector = B.getUnitVector(i);
             vector.print();
             
             for (int j = 0; j < rows; j++) {
@@ -78,7 +78,7 @@ public class QR_decomposition {
         for (int i = 0; i < length; i++) {
 
             for (int j = i; j < length; j++) {
-                double num = B.getDotProduct(i+1, j+1);
+                double num = B.getDotProduct(i, j);
                 R.addElementToMatrix(i, j, num);
             }
         }
@@ -114,17 +114,16 @@ public class QR_decomposition {
 //        }
 //        
         
-        VectorMatrix matrix = new VectorMatrix(3, 2);
+        VectorMatrix matrix = new VectorMatrix(2, 3);
         matrix.addElementToMatrix(0, 0, 2);
-        matrix.addElementToMatrix(0, 1, 0);
-//        matrix.addElementToMatrix(0, 2, 4);
-        matrix.addElementToMatrix(1, 0, 1);
+        matrix.addElementToMatrix(0, 1, 1);
+        matrix.addElementToMatrix(0, 2, 0);
+        matrix.addElementToMatrix(1, 0, 0);
         matrix.addElementToMatrix(1, 1, 2);
-//        matrix.addElementToMatrix(1, 2, -68);
-        matrix.addElementToMatrix(2, 0, 0);
-        matrix.addElementToMatrix(2, 1, 1);
-//        matrix.addElementToMatrix(2, 2, -41);
+        matrix.addElementToMatrix(1, 2, 1);
+        
         matrix.print();
+        
         QR_decomposition q = new QR_decomposition(matrix.multiply(matrix.transpose()));
         ArrayList<Double> eigVal = q.getEigenValues();
         int lenEigVal = eigVal.size();

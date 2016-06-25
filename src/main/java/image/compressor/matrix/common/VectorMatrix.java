@@ -28,17 +28,18 @@ public class VectorMatrix {
         }
         createMatrixFromArray(algebraicVectors);
     }
-    
-    public VectorMatrix(VectorMatrix copy){
+
+    public VectorMatrix(VectorMatrix copy) {
         this(copy.getRows(), copy.getCols());
         int rows = this.getRows();
         int cols = this.getCols();
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < cols; j++){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 this.addElementToMatrix(i, j, copy.getElement(i, j));
             }
         }
     }
+
     private void createMatrixFromArray(AlgebraicVector... algebraicVectors) {
         matrix = new ArrayList<AlgebraicVector>();
         for (AlgebraicVector algebraicVector : algebraicVectors) {
@@ -194,9 +195,13 @@ public class VectorMatrix {
         } else {
             result = new VectorMatrix(getRows(), m.getCols());
             for (int i = 0; i < getRows(); i++)
-                for (int j = 0; j < m.getCols(); j++)
-                    for (int k = 0; k < getCols(); k++)
-                        result.addElementToMatrix(i, i, getElement(i, k) * m.getElement(k, j));
+                for (int j = 0; j < m.getCols(); j++) {
+                    double elem = 0;
+                    for (int k = 0; k < getCols(); k++) {
+                        elem += getElement(i, k) * m.getElement(k, j);
+                    }
+                    result.addElementToMatrix(i, j, elem);
+                }
         }
         return result;
     }
