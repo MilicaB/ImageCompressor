@@ -13,6 +13,15 @@ public class VectorMatrix {
         }
     }
 
+    public VectorMatrix(double matrix[][]) {
+        this.matrix = new ArrayList<AlgebraicVector>();
+        for (int i = 0; i < matrix.length; i++) {
+            AlgebraicVector algebraicVector = new AlgebraicVector(matrix[i]);
+            this.matrix.add(algebraicVector);
+        }
+
+    }
+
     public VectorMatrix(AlgebraicVector... algebraicVectors) {
         if (!checkVectorsSize(algebraicVectors)) {
             throw new IllegalArgumentException("The size of the vectors should be equal!");
@@ -187,11 +196,11 @@ public class VectorMatrix {
      */
     public void print() {
         System.out.println("[");
-        for(int i=0;i<matrix.size()-1;i++){
+        for (int i = 0; i < matrix.size() - 1; i++) {
             matrix.get(i).print();
             System.out.print(",\n");
         }
-        matrix.get(matrix.size()-1).print();
+        matrix.get(matrix.size() - 1).print();
         System.out.println("]");
     }
 
