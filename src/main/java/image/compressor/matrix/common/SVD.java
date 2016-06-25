@@ -1,9 +1,10 @@
 package image.compressor.matrix.common;
 
-import Jama.EigenvalueDecomposition;
-import Jama.Matrix;
-import Jama.QRDecomposition;
 
+import Jama.QRDecomposition;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.ArrayList;
 /**
  *
  * @author Gabi
@@ -25,11 +26,11 @@ public class SVD {
          * @param savedEigenValues the number of searched singular values
          * @return array with singular values
          */
-        public static double [] singularValues( double [] eigen, int savedEigenValues){
+        public static double [] singularValues( ArrayList<Double> eigen, int savedEigenValues){
             double [] singular = new double [ savedEigenValues];
             
             for ( int i = 0; i < savedEigenValues; i++ ){
-                singular[i] = Math.sqrt(eigen[eigen.length - savedEigenValues + i]);
+                singular[i] = Math.sqrt(eigen.get(eigen.size() - savedEigenValues + i));
             }
             
             return singular;
@@ -43,28 +44,30 @@ public class SVD {
          * @param percent
          * @return 
          */
-        public static Matrix compress( Matrix rawPicMatrix, int percent){
+        public static VectorMatrix compress( VectorMatrix rawPicMatrix, int percent){
             
-            Matrix A = rawPicMatrix;
-            int rowCount = rawPicMatrix.getRowDimension();
-            int colCount = rawPicMatrix.getColumnDimension();
-            Matrix symmetricRawPicMatrix;
+            VectorMatrix A = rawPicMatrix;
+            int rowCount = rawPicMatrix.getRows();
+            int colCount = rawPicMatrix.getCols();
+            VectorMatrix symmetricRawPicMatrix;
             
             if(rowCount < colCount){
-                symmetricRawPicMatrix = rawPicMatrix.transpose().times(rawPicMatrix);
+                symmetricRawPicMatrix = rawPicMatrix.transpose().multiply(rawPicMatrix);
             }
             else{
-                symmetricRawPicMatrix = rawPicMatrix.times(rawPicMatrix.transpose());
+                symmetricRawPicMatrix = rawPicMatrix.multiply(rawPicMatrix.transpose());
             }
 
             
-            EigenvalueDecomposition a = symmetricRawPicMatrix.eig();
-            double [] eigenValues= a.getRealEigenvalues();
-          
+            //EigenvalueDecomposition a = symmetricRawPicMatrix.eig();
+            //double [] eigenValues= a.getRealEigenvalues();
+            QR_decomposition qr = new QR_decomposition(symmetricRawPicMatrix);
             
+            ArrayList<Double> eigenValues = qr.getEigenValues();
+ 
             int nonzeroVal = 0;
             for ( int i = 0; i < colCount; i++){
-                if ( eigenValues[i] > 0){ 
+                if ( eigenValues.get(i) > 0){ 
                     nonzeroVal++;
                 }
             }
@@ -72,34 +75,34 @@ public class SVD {
             int saved =(int)(nonzeroVal * ( 1.0- percent/100.0));
             double [] singular = singularValues(eigenValues, saved);
             
-            Matrix eigenVectors = a.getV();
+            VectorMatrix eigenVectors = qr.getEigenVectors();
            
             
-            Matrix U = new  Matrix(rowCount, saved);
-            Matrix temp = A.times(eigenVectors);//eigenVectors.transpose()
-            int tempCol = temp.getColumnDimension();
+            VectorMatrix U = new  VectorMatrix(rowCount, saved);
+            VectorMatrix temp = A.multiply(eigenVectors);//eigenVectors.transpose()
+            int tempCol = temp.getCols();
             for(int i = 0; i < rowCount; i++){
                 for(int j = 0; j < saved; j++){
-                    U.set(i, j, temp.get(i, tempCol - saved+j)/singular[j]);
+                    U.addElementToMatrix(i, j, temp.getElement(i, j)/singular[j]);
                 }
             }
             
-            Matrix singularMatrix = new Matrix(saved, saved);
+            VectorMatrix singularMatrix = new VectorMatrix(saved, saved);
             for(int i = 0; i < saved; i++){
-                singularMatrix.set(i, i, singular[i]);
+                singularMatrix.addElementToMatrix(i, i, singular[i]);
             }
             
-            int eigVCol = eigenVectors.getColumnDimension();
-            int eigVRow = eigenVectors.getRowDimension();
-            Matrix transposedEigV = eigenVectors.transpose();
-            Matrix newEigenVectors = new Matrix(saved, eigVCol);
+            int eigVCol = eigenVectors.getCols();
+            int eigVRow = eigenVectors.getRows();
+            VectorMatrix transposedEigV = eigenVectors.transpose();
+            VectorMatrix newEigenVectors = new VectorMatrix(saved, eigVCol);
             for ( int i = 0; i < saved; i++){
                 for ( int j = 0; j < eigVCol; j++){
-                    newEigenVectors.set(i,j,transposedEigV.get(eigVRow - saved + i, j));
+                    newEigenVectors.addElementToMatrix(i,j,transposedEigV.getElement(i, j));
                 }
             }
             
-            Matrix result = U.times(singularMatrix).times(newEigenVectors);
+            VectorMatrix result = U.multiply(singularMatrix).multiply(newEigenVectors);
             return result;
         }
     
